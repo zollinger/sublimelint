@@ -2,6 +2,7 @@
 
 import subprocess
 import os
+import sublime
 
 def check(codeString, filename):
 	info = None
@@ -11,7 +12,10 @@ def check(codeString, filename):
 		info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 		info.wShowWindow = subprocess.SW_HIDE
 
-	process = subprocess.Popen(('/usr/local/bin/jsl', '-conf', os.path.join(base, 'jslint', 'config'), '-nocontext', '-nosummary', '-nofilelisting', '-nologo', '-stdin'), stdin=subprocess.PIPE, stdout=subprocess.PIPE, startupinfo=info)
+	s = sublime.load_settings("Base File.sublime-settings")
+	jsl = s.get("jslint_path", "/usr/local/bin/jsl")
+
+	process = subprocess.Popen((jsl, '-conf', os.path.join(base, 'jslint', 'config'), '-nocontext', '-nosummary', '-nofilelisting', '-nologo', '-stdin'), stdin=subprocess.PIPE, stdout=subprocess.PIPE, startupinfo=info)
 	result = process.communicate(codeString)[0]
 	print result
 	return result
